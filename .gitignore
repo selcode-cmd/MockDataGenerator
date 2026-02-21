@@ -1,0 +1,5 @@
+```text
+*.exe
+*.o
+database.csv
+mock_gen
