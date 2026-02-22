@@ -6,7 +6,7 @@
 #include <string.h>
 #include <time.h>
 
-typedef enum { ID, FLOAT, STRING } DataType;
+typedef enum DataType { ID, FLOAT, STRING } DataType;
 typedef struct {
     DataType type;
     int stringLength;
@@ -15,7 +15,8 @@ typedef struct {
 
 void fillHeader(FieldDefinition** schema, int index, int choose);
 void menu(FieldDefinition** schema, int* fieldCount, int* rowCount);
-float randomFloat(float min, float max);
+int randomInt(int min, int max);
+double randomFloat(double min, double max);
 char* randomString(int length);
 void generate(FieldDefinition* schema, int fieldCount, int rowCount);
 #endif

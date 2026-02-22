@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 
-typedef enum { ID, FLOAT, STRING } DataType;
+typedef enum {ID, INT, DOUBLE, STRING, BOOL} DataType;
 
 typedef struct {
     DataType type;
@@ -17,11 +18,13 @@ void fillHeader(FieldDefinition** schema, int index, int choose) {
         return;
     }
 
-    if(choose == 3) (*schema)[index].type = STRING;
-    else if(choose == 2) (*schema)[index].type = FLOAT;
+    if(choose == 5) (*schema)[index].type = BOOL;
+    else if(choose == 4) (*schema)[index].type = STRING;
+    else if(choose == 3) (*schema)[index].type = DOUBLE;
+    else if(choose == 2)(*schema)[index].type = INT;
     else (*schema)[index].type = ID;
 
-    if(choose == 3) {
+    if(choose == 4) {
         printf("Enter string length: ");
         scanf("%d", &(*schema)[index].stringLength);
     }
@@ -43,7 +46,7 @@ void menu(FieldDefinition** schema, int* fieldCount, int* rowCount) {
 
     for(int i = 0; i < *fieldCount; i++) {
         int choose;
-        printf("\nField %d type (1:ID, 2:Float, 3:String): ", i + 1);
+        printf("\nField %d type (1:ID, 2:Int, 3:Double, 4:String, 5:Boolean): ", i + 1);
         scanf("%d", &choose);
         fillHeader(schema, i, choose);
     }
@@ -54,8 +57,12 @@ void menu(FieldDefinition** schema, int* fieldCount, int* rowCount) {
     printf("\nSchema created. Ready to generate %d rows.\n", *rowCount);
 }
 
-float randomFloat(float min, float max) {
-    return min + (float)rand() / RAND_MAX * (max - min);
+int randomInt(int min, int max) {
+    return min + rand() / RAND_MAX * (max - min);
+}
+
+double randomFloat(double min, double max) {
+    return min + (double)rand() / RAND_MAX * (max - min);
 }
 
 char* randomString(int length) {
@@ -91,8 +98,10 @@ void generate(FieldDefinition* schema, int fieldCount, int rowCount) {
     for(int i = 1; i <= rowCount; i++){
         for(int j = 0; j < fieldCount; j++) {
             if(schema[j].type == ID) fprintf(file, "%d", i);
-            else if(schema[j].type == FLOAT) fprintf(file, "%.2f", randomFloat(0, (float)rowCount));
-            else {
+            else if(schema[j].type == INT) fprintf(file, "%d", randomInt(0, rowCount));
+            else if(schema[j].type == DOUBLE) fprintf(file, "%.2f", randomFloat(0, (double)rowCount));
+            else if (schema[j].type == BOOL) fprintf(file, "%d", rand() % 2);
+            else{
                 char* str = randomString(schema[j].stringLength);
                 if(str != NULL) {
                     fprintf(file, "%s", str);
