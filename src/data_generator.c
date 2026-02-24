@@ -1,19 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <stdbool.h>
-
-typedef enum {ID, INT, DOUBLE, STRING, BOOL} DataType;
-
-typedef struct {
-    DataType type;
-    int stringLength;
-    char fieldName[30];
-} FieldDefinition;
+#include "data_generator.h"
 
 void fillHeader(FieldDefinition** schema, int index, int choose) {
-    if(choose < 1 || choose > 3) {
+    if(choose < 1 || choose > 5) {
         printf("Invalid selection!\n");
         return;
     }
@@ -58,7 +46,7 @@ void menu(FieldDefinition** schema, int* fieldCount, int* rowCount) {
 }
 
 int randomInt(int min, int max) {
-    return min + rand() / RAND_MAX * (max - min);
+    return min + rand() % RAND_MAX;
 }
 
 double randomFloat(double min, double max) {
@@ -83,7 +71,15 @@ char* randomString(int length) {
 }
 
 void generate(FieldDefinition* schema, int fieldCount, int rowCount) {
-    FILE* file = fopen("deneme.csv", "w");
+    char path[256];
+    
+    #ifdef _WIN32
+        sprintf(path, "%s\\Desktop\\mock_products.csv", getenv("USERPROFILE"));
+    #else
+        sprintf(path, "%s/Desktop/mock_products.csv", getenv("HOME"));
+    #endif
+
+    FILE* file = fopen(path, "w");
     if (file == NULL) {
         printf("Error: Could not create file!\n");
         return;
@@ -97,7 +93,7 @@ void generate(FieldDefinition* schema, int fieldCount, int rowCount) {
 
     for(int i = 1; i <= rowCount; i++){
         for(int j = 0; j < fieldCount; j++) {
-            if(schema[j].type == ID) fprintf(file, "%d", i);
+            if(schema[j].type == ID) fprintf(file, "%d", (rand() << 15) | rand());
             else if(schema[j].type == INT) fprintf(file, "%d", randomInt(0, rowCount));
             else if(schema[j].type == DOUBLE) fprintf(file, "%.2f", randomFloat(0, (double)rowCount));
             else if (schema[j].type == BOOL) fprintf(file, "%d", rand() % 2);
@@ -113,5 +109,5 @@ void generate(FieldDefinition* schema, int fieldCount, int rowCount) {
         fprintf(file, "\n");
     }
     fclose(file);
-    printf("\ndeneme.csv created successfully.\n");
+    printf("\nmock_products.csv created successfully.\n");
 }

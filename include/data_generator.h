@@ -6,7 +6,7 @@
 #include <string.h>
 #include <time.h>
 
-typedef enum DataType { ID, FLOAT, STRING } DataType;
+typedef enum DataType {ID = 1, INT, DOUBLE, STRING, BOOL} DataType;
 typedef struct {
     DataType type;
     int stringLength;
